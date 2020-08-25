@@ -55,7 +55,7 @@ fun println(log: String) {
 
 //var sourcesJar: TaskProvider<Jar>
 if (project.hasProperty("android")) {
-    val android = project.extensions["android"] as com.android.build.gradle.BaseExtension
+    val android = project.extensions["android"] as com.android.build.gradle.LibraryExtension
     //register sourcesJar for android
     val sourcesJar = tasks.register("sourcesJar", Jar::class) {
         archiveClassifier.set("sources")

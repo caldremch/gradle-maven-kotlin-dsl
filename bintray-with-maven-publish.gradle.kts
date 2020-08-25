@@ -1,21 +1,26 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayPlugin
 
+
+plugins.apply(BintrayPlugin::class)
+plugins.apply(MavenPublishPlugin::class)
+
 buildscript {
     repositories {
+        mavenLocal()
+        maven { url = uri("http://maven.aliyun.com/nexus/content/groups/public/") }
+        maven { url = uri("https://maven.aliyun.com/nexus/content/repositories/jcenter") }
+        maven { url = uri("https://maven.aliyun.com/nexus/content/repositories/google") }
         google()
         jcenter()
     }
     dependencies {
         classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
         classpath("com.android.tools.build:gradle:4.0.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0")
     }
 }
 
 
-plugins.apply(BintrayPlugin::class)
-plugins.apply(MavenPublishPlugin::class)
 
 var userName: String? = null
 var apiKey: String? = null
@@ -52,26 +57,31 @@ val myMavenPassword = properties.getProperty("myMavenPassword")
 fun println(log: String) {
     kotlin.io.println("maven-publish-bintray > $log")
 }
-
+println("${project.hasProperty("android")}")
+println("${project.hasProperty("java")}")
 //var sourcesJar: TaskProvider<Jar>
 if (project.hasProperty("android")) {
-    val android = project.extensions["android"] as com.android.build.gradle.LibraryExtension
+    println("${project.extensions["android"] is com.android.build.gradle.BaseExtension}")
+//    val android:Any by project.extensions
     //register sourcesJar for android
-    val sourcesJar = tasks.register("sourcesJar", Jar::class) {
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
-    //register task javadoc for android
-    val javadoc = tasks.register("javadoc", Javadoc::class) {
-        setSource(android.sourceSets.getByName("main").java.srcDirs)
-        classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
-    }
+//    val a = sourceSets.getByName("main")
 
-    tasks.register("androidJavaDocsJar", Jar::class) {
-        archiveClassifier.set("javadoc")
-        dependsOn(javadoc)
-        from(javadoc.get().destinationDir)
-    }
+//    val sourcesJar = tasks.register("sourcesJar", Jar::class) {
+//        archiveClassifier.set("sources")
+//        from(sourceSets.getByName("main").java.srcDirs)
+//    }
+//    //register task javadoc for android
+//    val javadoc = tasks.register("javadoc", Javadoc::class) {
+//        setSource(sourceSets.getByName("main").java.srcDirs)
+////        classpath += project.files(android.bootClasspath.joinToString(File.pathSeparator))
+//    }
+//
+//    tasks.register("androidJavaDocsJar", Jar::class) {
+//        archiveClassifier.set("javadoc")
+//        dependsOn(javadoc)
+//        from(javadoc.get().destinationDir)
+//    }
+
 
 } else {
 
@@ -106,10 +116,10 @@ configure<PublishingExtension> {
 
                 if (isAndroid) {
                     if (components.size > 0) {
-                        val androidJavaDocsJar by tasks
-                        val sourcesJar by tasks
-                        artifact(sourcesJar)
-                        artifact(androidJavaDocsJar)
+//                        val androidJavaDocsJar by tasks
+//                        val sourcesJar by tasks
+//                        artifact(sourcesJar)
+//                        artifact(androidJavaDocsJar)
                         from(components["debug"])
                     }
                 } else {
@@ -148,24 +158,21 @@ configure<PublishingExtension> {
 
 }
 
-afterEvaluate {
-    configure<BintrayExtension> {
-        user = userName
-        key = apiKey
-        setPublications(publicationName)
-        pkg.apply {
-            repo = myBintrayRepo
-            name = myBintrayName
+configure<BintrayExtension> {
+    user = userName
+    key = apiKey
+    setPublications(publicationName)
+    pkg.apply {
+        repo = myBintrayRepo
+        name = myBintrayName
+        desc = myLibraryDescription
+        websiteUrl = mySiteUrl
+        vcsUrl = myGitUrl
+        setLicenses(myAllLicenses)
+        publicDownloadNumbers = true
+        publish = true
+        version.apply {
             desc = myLibraryDescription
-            websiteUrl = mySiteUrl
-            vcsUrl = myGitUrl
-            setLicenses(myAllLicenses)
-            publicDownloadNumbers = true
-            publish = true
-            version.apply {
-                desc = myLibraryDescription
-            }
         }
     }
-
 }

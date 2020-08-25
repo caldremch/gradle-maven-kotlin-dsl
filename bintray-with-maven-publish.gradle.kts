@@ -116,8 +116,8 @@ configure<PublishingExtension> {
 
                 if (isAndroid) {
                     if (components.size > 0) {
-                        val androidJavaDocsJar:Jar? by tasks
-                        val sourcesJar:Jar? by tasks
+                        val androidJavaDocsJar =  tasks.findByName("androidJavaDocsJar")
+                        val sourcesJar = tasks.findByName("sourcesJar")
                         androidJavaDocsJar?.apply {
                             artifact(this)
                         }

@@ -116,10 +116,14 @@ configure<PublishingExtension> {
 
                 if (isAndroid) {
                     if (components.size > 0) {
-//                        val androidJavaDocsJar by tasks
-//                        val sourcesJar by tasks
-//                        artifact(sourcesJar)
-//                        artifact(androidJavaDocsJar)
+                        val androidJavaDocsJar:Jar? by tasks
+                        val sourcesJar:Jar? by tasks
+                        androidJavaDocsJar?.apply {
+                            artifact(this)
+                        }
+                        sourcesJar?.apply {
+                            artifact(this)
+                        }
                         from(components["debug"])
                     }
                 } else {

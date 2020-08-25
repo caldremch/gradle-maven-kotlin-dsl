@@ -76,8 +76,17 @@ if (project.hasProperty("android")) {
 
     configure<JavaPluginExtension> {
         withSourcesJar()
-        withJavadocJar()
+//        withJavadocJar()
     }
+
+    tasks.register("javadocJar", Jar::class) {
+        val javadoc by tasks
+        archiveClassifier.set("javadoc")
+        val dirs = (javadoc as Javadoc).destinationDir
+        println("javadoc.destinationDir-->${dirs?.absolutePath}")
+        from(dirs)
+    }
+
 
 }
 val publicationName = "Publication"
@@ -104,6 +113,8 @@ configure<PublishingExtension> {
                     }
                 } else {
                     from(components["java"])
+                    val javadocJar by tasks
+                    artifact(javadocJar)
                 }
             }
 

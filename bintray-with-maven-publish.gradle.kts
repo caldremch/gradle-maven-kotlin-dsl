@@ -141,7 +141,6 @@ afterEvaluate {
         user = userName
         key = apiKey
         setPublications(publicationName)
-        override = true
         pkg.apply {
             repo = myBintrayRepo
             name = myBintrayName

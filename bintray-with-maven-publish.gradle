@@ -37,21 +37,17 @@ def apiKey = properties.getProperty("bintray.apiKey")
 
 
 
-tasks.withType(Javadoc) {
-    //fixed unknow tag error
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.addStringOption('encoding', 'UTF-8')
-    options.addStringOption('charSet', 'UTF-8')
-}
+
 
 if (isAndroid) {
     task sourcesJar(type: Jar) {
         getArchiveClassifier().set("sources")
-        from project.android.sourceSets.main.java.srcDirs
+        from android.sourceSets.main.java.srcDirs
     }
 
     task javadoc(type: Javadoc) {
-        source = project.android.sourceSets.main.java.srcDirs
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     }
 
@@ -62,13 +58,23 @@ if (isAndroid) {
 
 } else {
 
-    java{
-        withSourcesJar()
-        withJavadocJar()
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        getArchiveClassifier().set("sources")
+        from sourceSets.main.allSource
     }
 
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        getArchiveClassifier().set("javadoc")
+        from javadoc.destinationDir
+    }
 }
 
+tasks.withType(Javadoc) {
+    //fixed unknow tag error
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
 
 bintray {
     user = userName
@@ -101,7 +107,8 @@ publishing {
                     artifact androidJavaDocsJar
                     from components.debug
                 }else{
-                    from components.java
+                    artifact sourcesJar
+                    artifact javadocJar
                 }
             }
 

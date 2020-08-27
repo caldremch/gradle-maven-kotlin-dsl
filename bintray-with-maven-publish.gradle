@@ -57,15 +57,20 @@ if (isAndroid) {
 
 } else {
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        getArchiveClassifier().set("sources")
-        from sourceSets.main.allSource
+    java{
+        withJavadocJar()
+        withSourcesJar()
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        getArchiveClassifier().set("javadoc")
-        from javadoc.destinationDir
-    }
+//    task sourcesJar(type: Jar, dependsOn: classes) {
+//        getArchiveClassifier().set("sources")
+//        from sourceSets.main.allSource
+//    }
+//
+//    task javadocJar(type: Jar, dependsOn: javadoc) {
+//        getArchiveClassifier().set("javadoc")
+//        from javadoc.destinationDir
+//    }
 }
 
 tasks.withType(Javadoc) {
@@ -106,8 +111,7 @@ publishing {
                     artifact androidJavaDocsJar
                     from components.debug
                 }else{
-                    artifact sourcesJar
-                    artifact javadocJar
+                    from components.java
                 }
             }
 

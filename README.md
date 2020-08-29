@@ -8,7 +8,9 @@ publish with 'maven-publish',  'bintray' , Kotlin DSL
 ## 基础配置
 
 必填项:
+
 上传到bintray: **myBintrayRepo必填** 其他的无所谓
+
 上传到maven: **myPublishedGroupId必填** 其他的无所谓
 
 ```groovy

@@ -147,22 +147,3 @@ configure<PublishingExtension> {
     }
 
 }
-
-//configure<BintrayExtension> {
-//    user = userName
-//    key = apiKey
-//    setPublications(publicationName)
-//    pkg.apply {
-//        repo = myBintrayRepo
-//        name = myBintrayName
-//        desc = myLibraryDescription
-//        websiteUrl = mySiteUrl
-//        vcsUrl = myGitUrl
-//        setLicenses(myAllLicenses)
-//        publicDownloadNumbers = true
-//        publish = true
-//        version.apply {
-//            desc = myLibraryDescription
-//        }
-//    }
-//}

@@ -6,29 +6,12 @@ static def printlnEx(log) {
 apply plugin: "maven-publish"
 apply plugin: "signing"
 
-
-
-
 group = myPublishedGroupId
 version = myLibraryVersion
 
 def isAndroid = project.hasProperty("android")
 
 printlnEx("isAndroid: " + isAndroid)
-
-
-//def properties = new Properties()
-//properties.load(project.rootProject.file("local.properties").newDataInputStream())
-//def userName = properties.getProperty("bintray.user")
-//def apiKey = properties.getProperty("bintray.apiKey")
-
-
-
-//签名
-//signing {
-//    required { gradle.taskGraph.hasTask("publish") }
-//    sign configurations.archives
-//}
 
 if (isAndroid) {
     task sourcesJar(type: Jar) {
@@ -40,12 +23,6 @@ if (isAndroid) {
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     }
-
-//    task androidJavaDocsJar(type: Jar, dependsOn: javadoc) {
-//        getArchiveClassifier().set("javadoc")
-////        options.encoding = "UTF-8"
-//        from javadoc.destinationDir
-//    }
 
 } else {
     java{
@@ -61,24 +38,6 @@ tasks.withType(Javadoc) {
     options.addStringOption('charSet', 'UTF-8')
 }
 
-//bintray {
-//    user = userName
-//    key = apiKey
-//    publications = ['bintrayPublication']
-//    pkg {
-//        repo = myBintrayRepo
-//        name = myBintrayName
-//        desc = myLibraryDescription
-//        websiteUrl = mySiteUrl
-//        vcsUrl = myGitUrl
-//        licenses = [myAllLicenses]
-//        publicDownloadNumbers = true
-//        publish = true
-//        version {
-//            desc = myLibraryDescription
-//        }
-//    }
-//}
 
 printlnEx(ossrhUsername)
 printlnEx(ossrhPassword)
@@ -87,25 +46,23 @@ printlnEx(project.getProperties().get("signing.keyId"))
 publishing {
 
     repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-//            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 
+        maven {
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+
+        maven {
+            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             credentials {
                 username = ossrhUsername
                 password = ossrhPassword
             }
         }
     }
-
-//    repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-//        authentication(userName: ossrhUsername, password: ossrhPassword)
-//    }
-
-//    snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-////        authentication(userName: ossrhUsername, password: ossrhPassword)
-//    }
 
     publications {
         sonatypePublication(MavenPublication) {

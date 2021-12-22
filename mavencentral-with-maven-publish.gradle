@@ -12,6 +12,8 @@ version = myLibraryVersion
 def isAndroid = project.hasProperty("android")
 
 printlnEx("isAndroid: " + isAndroid)
+printlnEx("group: " + group)
+printlnEx("version: " + version)
 
 if (isAndroid) {
     task sourcesJar(type: Jar) {
